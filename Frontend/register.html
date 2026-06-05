@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Member Registration — Al-Noor Central Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:        #0E0B07;
+      --parchment:  #F7F1E3;
+      --parch2:     #EFE7CE;
+      --parch3:     #E5D9B6;
+      --gold:       #B8860B;
+      --gold-light: #D4A017;
+      --gold-shine: #F0C040;
+      --crimson:    #8B1A1A;
+      --brown:      #5C3A1E;
+      --brown2:     #7A4F2A;
+      --sage:       #4A6741;
+      --muted:      #7A6A50;
+      --border:     rgba(92,58,30,0.22);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--parchment); color:var(--ink); min-height:100vh; }
+
+    /* ── HEADER ── */
+    .library-header { background:var(--ink); position:relative; overflow:hidden; }
+    .header-stripe { height:6px; background:linear-gradient(90deg,var(--brown) 0%,var(--gold) 20%,var(--gold-shine) 50%,var(--gold) 80%,var(--brown) 100%); }
+    .library-header::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 50% 50%, rgba(184,134,11,0.08) 0%,transparent 70%); pointer-events:none; }
+    .header-inner { position:relative; z-index:1; max-width:980px; margin:0 auto; padding:2.5rem 2rem 2rem; text-align:center; }
+    .corner { position:absolute; font-size:1.8rem; color:var(--gold); opacity:0.35; }
+    .corner.tl{top:18px;left:22px;} .corner.tr{top:18px;right:22px;} .corner.bl{bottom:14px;left:22px;} .corner.br{bottom:14px;right:22px;}
+    .ornament-rule { display:flex; align-items:center; gap:1rem; margin:1rem 0; }
+    .rule-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+    .rule-diamond { width:8px; height:8px; background:var(--gold); transform:rotate(45deg); box-shadow:0 0 6px rgba(212,160,23,0.5); }
+    .library-emblem { width:80px; height:80px; border-radius:50%; border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem; background:rgba(184,134,11,0.1); font-size:2.2rem; box-shadow:0 0 0 4px rgba(184,134,11,0.15),0 0 20px rgba(184,134,11,0.2); animation:pulseGold 3s ease-in-out infinite; }
+    @keyframes pulseGold { 0%,100%{box-shadow:0 0 0 4px rgba(184,134,11,0.15),0 0 20px rgba(184,134,11,0.2);} 50%{box-shadow:0 0 0 7px rgba(184,134,11,0.2),0 0 32px rgba(184,134,11,0.35);} }
+    .library-name-sub { font-family:'DM Sans',sans-serif; font-size:0.72rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem; }
+    .library-name-main { font-family:'Cinzel',serif; font-size:clamp(1.8rem,4vw,3rem); font-weight:900; color:#F5EDD5; line-height:1.1; letter-spacing:0.04em; text-shadow:0 2px 12px rgba(184,134,11,0.3); }
+    .library-name-arabic { font-size:1rem; color:rgba(245,237,213,0.45); font-style:italic; margin-top:0.2rem; font-family:'EB Garamond',serif; }
+    .library-tagline { font-family:'EB Garamond',serif; font-size:0.95rem; font-style:italic; color:rgba(245,237,213,0.5); margin-top:0.5rem; }
+    .header-bottom-stripe { height:4px; background:var(--crimson); }
+
+    /* ── SUBHEADER ── */
+    .subheader { background:var(--crimson); display:flex; align-items:center; justify-content:space-between; padding:0.6rem 5%; }
+    .subheader-title { font-family:'Cinzel',serif; font-size:0.75rem; letter-spacing:0.12em; color:rgba(245,237,213,0.9); text-transform:uppercase; }
+    .subheader-nav { display:flex; gap:1.5rem; }
+    .subheader-nav a { font-size:0.78rem; color:rgba(245,237,213,0.65); text-decoration:none; transition:color 0.2s; }
+    .subheader-nav a:hover { color:var(--gold-shine); }
+
+    /* ── PAGE BODY ── */
+    .page-body { max-width:980px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+    .form-title-wrap { text-align:center; margin-bottom:2rem; }
+    .form-eyebrow { font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.2em; color:var(--crimson); text-transform:uppercase; margin-bottom:0.5rem; }
+    .form-title { font-family:'Cinzel',serif; font-size:1.6rem; font-weight:700; color:var(--ink); letter-spacing:0.04em; margin-bottom:0.4rem; }
+    .form-subtitle { font-family:'EB Garamond',serif; font-size:1rem; font-style:italic; color:var(--muted); }
+
+    /* ── STEPS ── */
+    .steps-row { display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:2rem; }
+    .step-wrap { display:flex; flex-direction:column; align-items:center; }
+    .step-circle { width:36px; height:36px; border-radius:50%; border:2px solid var(--border); background:var(--parch2); display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.82rem; font-weight:700; color:var(--muted); transition:all 0.3s; }
+    .step-circle.active { border-color:var(--gold); background:var(--gold); color:var(--ink); }
+    .step-circle.done   { border-color:var(--sage); background:var(--sage); color:white; }
+    .step-label { font-size:0.72rem; color:var(--muted); margin-top:4px; text-align:center; white-space:nowrap; }
+    .step-label.active { color:var(--gold); font-weight:600; }
+    .step-connector { width:60px; height:2px; background:var(--border); margin:0 4px; transition:background 0.3s; }
+    .step-connector.done { background:var(--sage); }
+
+    /* ── CARD ── */
+    .reg-card { background:white; border:1px solid var(--border); border-radius:2px; box-shadow:0 12px 48px rgba(14,11,7,0.22); overflow:hidden; position:relative; }
+    .reg-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--crimson),var(--gold),var(--crimson)); }
+
+    /* ── SECTION BANNER ── */
+    .section-banner { background:var(--ink); padding:0.75rem 1.75rem; display:flex; align-items:center; gap:10px; }
+    .section-banner .sb-icon { font-size:1rem; }
+    .section-banner h3 { font-family:'Cinzel',serif; font-size:0.82rem; font-weight:600; color:var(--gold-light); letter-spacing:0.1em; text-transform:uppercase; }
+    .section-banner .sb-line { flex:1; height:1px; background:rgba(184,134,11,0.25); }
+    .section-banner .sb-step { font-size:0.72rem; color:rgba(212,160,23,0.6); }
+
+    /* ── TABLE ── */
+    .reg-table { width:100%; border-collapse:collapse; }
+    .reg-table tr { transition:background 0.15s; }
+    .reg-table tr:not(.no-hover):hover td { background:rgba(239,231,206,0.45); }
+    .reg-table td.lbl { width:28%; padding:0.9rem 1.25rem 0.9rem 1.75rem; background:var(--parch2); border-bottom:1px solid var(--border); border-right:2px solid var(--border); vertical-align:middle; }
+    .lbl-text { font-family:'EB Garamond',serif; font-size:0.95rem; font-weight:500; color:var(--brown); line-height:1.3; }
+    .lbl-hint { font-size:0.72rem; color:var(--muted); font-style:italic; margin-top:2px; }
+    .req { color:var(--crimson); font-size:0.8rem; margin-left:2px; }
+    .reg-table td.val { padding:0.75rem 1.5rem 0.75rem 1.25rem; border-bottom:1px solid var(--border); vertical-align:middle; background:white; }
+
+    /* ── INPUTS ── */
+    .reg-input,.reg-select,.reg-textarea { width:100%; padding:0.62rem 0.9rem; border:1.5px solid rgba(92,58,30,0.2); border-radius:2px; background:var(--parchment); font-family:'DM Sans',sans-serif; font-size:0.88rem; color:var(--ink); outline:none; transition:all 0.2s; }
+    .reg-input:focus,.reg-select:focus,.reg-textarea:focus { border-color:var(--gold); background:white; box-shadow:0 0 0 3px rgba(184,134,11,0.12); }
+    .reg-input::placeholder { color:rgba(122,106,80,0.5); font-style:italic; }
+    .reg-select { appearance:none; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235C3A1E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:2rem; }
+    .reg-textarea { resize:vertical; min-height:72px; }
+    .input-pair { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+
+    /* ── RADIO / CHECK ── */
+    .radio-group,.check-group { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .radio-opt,.check-opt { display:flex; align-items:center; gap:7px; padding:0.45rem 0.9rem; border:1.5px solid var(--border); border-radius:2px; cursor:pointer; font-size:0.84rem; color:var(--brown); background:var(--parchment); transition:all 0.2s; user-select:none; }
+    .radio-opt:hover,.check-opt:hover { border-color:var(--gold); background:rgba(239,231,206,0.8); }
+    .radio-opt input,.check-opt input { accent-color:var(--gold); width:14px; height:14px; }
+    .radio-opt.selected,.check-opt.selected { border-color:var(--gold); background:rgba(184,134,11,0.08); color:var(--ink); font-weight:500; }
+
+    /* ── PHOTO ── */
+    .photo-upload-cell { display:flex; align-items:center; gap:1.25rem; }
+    .photo-preview { width:80px; height:80px; border-radius:2px; border:2px dashed var(--border); background:var(--parch2); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; transition:border-color 0.2s; flex-shrink:0; }
+    .photo-preview:hover { border-color:var(--gold); }
+    .photo-preview img { width:100%; height:100%; object-fit:cover; display:none; }
+    .photo-placeholder { font-size:1.5rem; }
+    .photo-hint { font-size:0.62rem; color:var(--muted); text-align:center; }
+    .photo-upload-info { font-size:0.78rem; color:var(--muted); line-height:1.5; }
+    .btn-upload { display:inline-block; margin-top:6px; padding:0.3rem 0.85rem; background:var(--parch2); border:1.5px solid var(--border); border-radius:2px; font-size:0.78rem; color:var(--brown); cursor:pointer; font-weight:500; transition:all 0.2s; }
+    .btn-upload:hover { border-color:var(--gold); background:var(--parch3); }
+
+    /* ── PASSWORD ── */
+    .pw-wrap { position:relative; }
+    .pw-toggle { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--muted); font-size:0.78rem; font-family:'DM Sans',sans-serif; }
+    .pw-strength { display:flex; gap:4px; margin-top:6px; }
+    .pw-bar { flex:1; height:3px; border-radius:2px; background:var(--border); transition:background 0.3s; }
+    .pw-label { font-size:0.72rem; color:var(--muted); margin-top:3px; }
+
+    /* ── ACTIONS ── */
+    .form-actions { display:flex; gap:0.9rem; align-items:center; padding:1.25rem 1.75rem; background:var(--parch2); border-top:2px solid var(--border); flex-wrap:wrap; }
+    .btn-submit { padding:0.82rem 2.5rem; background:linear-gradient(135deg,var(--crimson),#A52020); color:#F5EDD5; border:none; border-radius:2px; font-family:'Cinzel',serif; font-size:0.85rem; font-weight:600; letter-spacing:0.08em; cursor:pointer; transition:all 0.25s; text-transform:uppercase; box-shadow:0 3px 12px rgba(139,26,26,0.3); }
+    .btn-submit:hover { transform:translateY(-1px); box-shadow:0 5px 18px rgba(139,26,26,0.4); }
+    .btn-back { padding:0.82rem 1.5rem; background:transparent; color:var(--muted); border:1.5px solid var(--border); border-radius:2px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+    .btn-back:hover { border-color:var(--brown); color:var(--brown); }
+    .signin-link { margin-left:auto; font-size:0.84rem; color:var(--muted); }
+    .signin-link a { color:var(--crimson); font-weight:600; text-decoration:none; }
+    .signin-link a:hover { text-decoration:underline; }
+
+    /* ── PANELS ── */
+    .step-panel { display:none; }
+    .step-panel.active { display:block; }
+
+    /* ── NOTICE ── */
+    .notice-box { display:flex; gap:12px; align-items:flex-start; background:rgba(139,26,26,0.06); border:1px solid rgba(139,26,26,0.2); border-left:3px solid var(--crimson); padding:0.85rem 1.25rem; margin:1rem 1.5rem; font-size:0.82rem; color:var(--brown); line-height:1.55; border-radius:0 2px 2px 0; }
+    .terms-row { display:flex; align-items:flex-start; gap:10px; padding:0.75rem 1.5rem; }
+    .terms-row input[type=checkbox] { accent-color:var(--gold); width:15px; height:15px; margin-top:2px; flex-shrink:0; }
+    .terms-row span { font-size:0.82rem; color:var(--muted); line-height:1.55; }
+    .terms-row a { color:var(--crimson); font-weight:500; text-decoration:none; }
+
+    /* ── SUCCESS ── */
+    .success-screen { display:none; text-align:center; padding:4rem 2rem; background:white; }
+    .success-seal { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,var(--sage),#5A8A50); display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin:0 auto 1.5rem; box-shadow:0 0 0 8px rgba(74,103,65,0.1),0 8px 30px rgba(74,103,65,0.3); }
+    .success-screen h2 { font-family:'Cinzel',serif; font-size:1.7rem; color:var(--ink); margin-bottom:0.5rem; }
+    .success-screen p { color:var(--muted); font-family:'EB Garamond',serif; font-size:1.05rem; margin-bottom:0.25rem; }
+    .success-id { display:inline-block; margin:1rem 0; padding:0.5rem 1.5rem; background:var(--parch2); border:1px solid var(--border); border-radius:2px; font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.1em; color:var(--brown); }
+    .success-actions { display:flex; gap:0.75rem; justify-content:center; margin-top:1.5rem; flex-wrap:wrap; }
+    .s-btn-primary { padding:0.75rem 2rem; background:var(--crimson); color:#F5EDD5; border-radius:2px; font-family:'Cinzel',serif; font-size:0.82rem; letter-spacing:0.08em; text-decoration:none; }
+    .s-btn-ghost { padding:0.75rem 1.5rem; background:transparent; color:var(--brown); border:1.5px solid var(--border); border-radius:2px; font-size:0.85rem; text-decoration:none; }
+
+    /* ── FOOTER ── */
+    .page-footer { background:var(--ink); color:rgba(245,237,213,0.4); text-align:center; padding:1.25rem; font-size:0.78rem; letter-spacing:0.05em; }
+    .page-footer a { color:var(--gold); text-decoration:none; }
+
+    @media(max-width:700px){
+      .reg-table td.lbl{width:38%;padding:0.75rem 0.9rem;}
+      .reg-table td.val{padding:0.65rem 0.9rem;}
+      .input-pair{grid-template-columns:1fr;}
+      .header-inner{padding:2rem 1rem 1.5rem;}
+      .step-connector{width:30px;}
+      .subheader{flex-direction:column;gap:0.5rem;text-align:center;}
+      .signin-link{margin-left:0;width:100%;text-align:center;}
+    }
+    @media(max-width:500px){
+      .reg-table,.reg-table tbody,.reg-table tr,.reg-table td{display:block;width:100%;}
+      .reg-table td.lbl{border-right:none;border-bottom:none;padding-bottom:0.3rem;}
+      .reg-table td.val{padding-top:0.4rem;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LIBRARY HEADER ══ -->
+<header class="library-header">
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <span class="corner tl">✦</span><span class="corner tr">✦</span>
+    <span class="corner bl">✦</span><span class="corner br">✦</span>
+    <div class="library-emblem">📚</div>
+    <div class="library-name-sub">Est. 2010 &nbsp;·&nbsp; Rawalpindi, Punjab, Pakistan</div>
+    <h1 class="library-name-main">Librasmart</h1>
+    <div class="library-name-arabic">Librasmart</div>
+    <div class="ornament-rule">
+      <div class="rule-line"></div>
+      <div class="rule-diamond"></div><div class="rule-diamond" style="opacity:.4;"></div><div class="rule-diamond"></div>
+      <div class="rule-line"></div>
+    </div>
+    <div class="library-tagline">"Knowledge is the light that guides all souls — read, grow, illuminate."</div>
+  </div>
+  <div class="header-bottom-stripe"></div>
+</header>
+
+<div class="subheader">
+  <span class="subheader-title">📖 LibraSmart Management System</span>
+  <nav class="subheader-nav">
+    <a href="index.html">Home</a>
+    <a href="catalog.html">Catalog</a>
+    <a href="login.html">Sign In</a>
+    <a href="about.html">About</a>
+  </nav>
+</div>
+
+<!-- ══ BODY ══ -->
+<div class="page-body">
+
+  <div class="form-title-wrap">
+    <div class="form-eyebrow">✦ New Member Enrollment ✦</div>
+    <h2 class="form-title">Library Membership Registration</h2>
+    <p class="form-subtitle">Complete the form below to register as a member of Al-Noor Central Library</p>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps-row" id="stepsRow">
+    <div class="step-wrap"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1">Personal</div></div>
+    <div class="step-connector" id="conn1"></div>
+    <div class="step-wrap"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2">Contact</div></div>
+    <div class="step-connector" id="conn2"></div>
+    <div class="step-wrap"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3">Account</div></div>
+    <div class="step-connector" id="conn3"></div>
+    <div class="step-wrap"><div class="step-circle" id="sc4">4</div><div class="step-label" id="sl4">Confirm</div></div>
+  </div>
+
+  <div class="reg-card" id="regCard">
+
+    <!-- ══ STEP 1 ══ -->
+    <div class="step-panel active" id="step1">
+      <div class="section-banner">
+        <span class="sb-icon">👤</span><h3>Personal Information</h3>
+        <div class="sb-line"></div><span class="sb-step">Step 1 of 4</span>
+      </div>
+      <table class="reg-table">
+        <tr>
+          <td class="lbl"><div class="lbl-text">Full Name <span class="req">*</span></div><div class="lbl-hint">As per CNIC / B-Form</div></td>
+          <td class="val"><div class="input-pair"><input class="reg-input" type="text" id="firstName" placeholder="First Name" required/><input class="reg-input" type="text" id="lastName" placeholder="Last Name" required/></div></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Father's Name <span class="req">*</span></div></td>
+          <td class="val"><input class="reg-input" type="text" id="fatherName" placeholder="Father's full name"/></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Date of Birth <span class="req">*</span></div></td>
+          <td class="val"><input class="reg-input" type="date" id="dob" style="max-width:220px;"/></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Gender <span class="req">*</span></div></td>
+          <td class="val">
+            <div class="radio-group" id="genderGroup">
+              <label class="radio-opt" onclick="selectRadio(this,'genderGroup')"><input type="radio" name="gender" value="Male"/> Male</label>
+              <label class="radio-opt" onclick="selectRadio(this,'genderGroup')"><input type="radio" name="gender" value="Female"/> Female</label>
+              <label class="radio-opt" onclick="selectRadio(this,'genderGroup')"><input type="radio" name="gender" value="Other"/> Other</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">CNIC / B-Form No.</div><div class="lbl-hint">e.g. 37201-XXXXXXX-X</div></td>
+          <td class="val"><input class="reg-input" type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" maxlength="15" oninput="formatCNIC(this)" style="max-width:240px;"/></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Nationality</div></td>
+          <td class="val"><select class="reg-select" style="max-width:240px;"><option selected>🇵🇰 Pakistani</option><option>Other</option></select></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Photograph</div><div class="lbl-hint">Passport size, JPG/PNG, max 2MB</div></td>
+          <td class="val">
+            <div class="photo-upload-cell">
+              <div class="photo-preview" onclick="document.getElementById('photoInput').click()">
+                <img id="photoImg" src="" alt=""/>
+                <div class="photo-placeholder">🖼</div>
+                <div class="photo-hint">Click to upload</div>
+              </div>
+              <div class="photo-upload-info">
+                Accepted: JPG, PNG<br/>Max size: 2 MB<br/>Size: 35×45 mm
+                <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="previewPhoto(this)"/>
+                <label class="btn-upload" for="photoInput">📁 Choose File</label>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="form-actions">
+        <button class="btn-submit" onclick="nextStep(2)">Continue → Contact Info</button>
+        <div class="signin-link">Already a member? <a href="login.html">Sign In</a></div>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2 ══ -->
+    <div class="step-panel" id="step2">
+      <div class="section-banner">
+        <span class="sb-icon">🏫</span><h3>Contact &amp; Academic Details</h3>
+        <div class="sb-line"></div><span class="sb-step">Step 2 of 4</span>
+      </div>
+      <table class="reg-table">
+        <tr>
+          <td class="lbl"><div class="lbl-text">Phone Number <span class="req">*</span></div></td>
+          <td class="val"><input class="reg-input" type="tel" id="phone" placeholder="+92 3XX XXXXXXX" style="max-width:260px;"/></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">WhatsApp Number</div><div class="lbl-hint">For reminders &amp; alerts</div></td>
+          <td class="val">
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+              <input class="reg-input" type="tel" id="whatsapp" placeholder="+92 3XX XXXXXXX" style="max-width:240px;"/>
+              <label class="check-opt" onclick="sameAsPhone(this)"><input type="checkbox" id="samePhone"/> Same as phone</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Email Address</div><div class="lbl-hint">For account notifications</div></td>
+          <td class="val"><input class="reg-input" type="email" id="email2" placeholder="you@example.com"/></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Home Address <span class="req">*</span></div></td>
+          <td class="val"><textarea class="reg-textarea" id="address" placeholder="House no., street, area, city…"></textarea></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Member Type <span class="req">*</span></div></td>
+          <td class="val">
+            <select class="reg-select" id="memberType" onchange="toggleAcademic()" style="max-width:280px;">
+              <option value="">— Select member type —</option>
+              <option value="student">🎓 Student</option>
+              <option value="faculty">👨‍🏫 Faculty / Teacher</option>
+              <option value="public">🏙 General Public</option>
+              <option value="senior">🧓 Senior Citizen</option>
+              <option value="staff">👔 Library Staff</option>
+            </select>
+          </td>
+        </tr>
+        <tr id="instRow" style="display:none;">
+          <td class="lbl"><div class="lbl-text">Institution / School</div></td>
+          <td class="val"><input class="reg-input" type="text" id="institution" placeholder="Name of your institution or school"/></td>
+        </tr>
+        <tr id="rollRow" style="display:none;">
+          <td class="lbl"><div class="lbl-text">Roll No. / Employee ID</div></td>
+          <td class="val"><input class="reg-input" type="text" id="rollNo" placeholder="e.g. 2024-CS-0042" style="max-width:240px;"/></td>
+        </tr>
+        <tr id="deptRow" style="display:none;">
+          <td class="lbl"><div class="lbl-text">Department / Class</div></td>
+          <td class="val"><input class="reg-input" type="text" id="dept" placeholder="e.g. Computer Science, FA-II"/></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Preferred Language</div></td>
+          <td class="val">
+            <div class="check-group">
+              <label class="check-opt selected" onclick="toggleCheck(this)"><input type="checkbox" checked/> English</label>
+              <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox"/> Urdu</label>
+              <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox"/> Arabic</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Emergency Contact</div><div class="lbl-hint">Parent / Guardian</div></td>
+          <td class="val"><div class="input-pair"><input class="reg-input" type="text" placeholder="Contact Name"/><input class="reg-input" type="tel" placeholder="Phone Number"/></div></td>
+        </tr>
+      </table>
+      <div class="form-actions">
+        <button class="btn-back" onclick="nextStep(1)">← Back</button>
+        <button class="btn-submit" onclick="nextStep(3)">Continue → Create Account</button>
+        <div class="signin-link">Already a member? <a href="login.html">Sign In</a></div>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3 ══ -->
+    <div class="step-panel" id="step3">
+      <div class="section-banner">
+        <span class="sb-icon">🔐</span><h3>Account Setup</h3>
+        <div class="sb-line"></div><span class="sb-step">Step 3 of 4</span>
+      </div>
+      <table class="reg-table">
+        <tr>
+          <td class="lbl"><div class="lbl-text">Email Address <span class="req">*</span></div><div class="lbl-hint">Your login credential</div></td>
+          <td class="val"><input class="reg-input" type="email" id="email" placeholder="you@example.com"/></td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Username <span class="req">*</span></div><div class="lbl-hint">Lowercase letters, digits, underscore</div></td>
+          <td class="val">
+            <div class="pw-wrap" style="max-width:280px;">
+              <input class="reg-input" type="text" id="username" placeholder="e.g. ali_khan_92" oninput="checkUsername(this)"/>
+              <span id="usernameStatus" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:0.9rem;"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Password <span class="req">*</span></div><div class="lbl-hint">Minimum 8 characters</div></td>
+          <td class="val">
+            <div class="pw-wrap" style="max-width:320px;">
+              <input class="reg-input" type="password" id="password" placeholder="Create a strong password" oninput="checkStrength(this.value)"/>
+              <button type="button" class="pw-toggle" onclick="togglePw('password',this)">Show</button>
+            </div>
+            <div class="pw-strength"><div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div><div class="pw-bar" id="pb3"></div><div class="pw-bar" id="pb4"></div></div>
+            <div class="pw-label" id="pwLabel">Enter a password</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Confirm Password <span class="req">*</span></div></td>
+          <td class="val">
+            <div class="pw-wrap" style="max-width:320px;">
+              <input class="reg-input" type="password" id="confirmPw" placeholder="Repeat your password" oninput="checkMatch()"/>
+              <button type="button" class="pw-toggle" onclick="togglePw('confirmPw',this)">Show</button>
+            </div>
+            <div id="matchStatus" style="font-size:0.74rem;margin-top:4px;"></div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Security Question</div></td>
+          <td class="val">
+            <select class="reg-select" id="secQ" style="margin-bottom:0.5rem;">
+              <option>What is the name of your first school?</option>
+              <option>What is your mother's maiden name?</option>
+              <option>What was the name of your first pet?</option>
+              <option>What city were you born in?</option>
+            </select>
+            <input class="reg-input" type="text" id="secA" placeholder="Your answer (keep it secret)"/>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl"><div class="lbl-text">Notifications</div><div class="lbl-hint">How to receive alerts</div></td>
+          <td class="val">
+            <div class="check-group">
+              <label class="check-opt selected" onclick="toggleCheck(this)"><input type="checkbox" checked/> 📧 Email</label>
+              <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox"/> 📱 SMS</label>
+              <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox"/> 🟢 WhatsApp</label>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="form-actions">
+        <button class="btn-back" onclick="nextStep(2)">← Back</button>
+        <button class="btn-submit" onclick="nextStep(4)">Continue → Review &amp; Submit</button>
+        <div class="signin-link">Already a member? <a href="login.html">Sign In</a></div>
+      </div>
+    </div>
+
+    <!-- ══ STEP 4 ══ -->
+    <div class="step-panel" id="step4">
+      <div class="section-banner">
+        <span class="sb-icon">📋</span><h3>Review &amp; Confirm</h3>
+        <div class="sb-line"></div><span class="sb-step">Step 4 of 4</span>
+      </div>
+      <div class="notice-box">📌 Please review your details carefully. After submission you will receive a Library Card ID. Visit the library desk with your original CNIC to activate your membership card.</div>
+      <table class="reg-table" id="reviewTable"></table>
+      <table class="reg-table">
+        <tr class="no-hover">
+          <td colspan="2" style="padding:0.25rem 1.25rem;"><div class="terms-row">
+            <input type="checkbox" id="termsCheck"/>
+            <span>I confirm that all information provided is correct and accurate. I agree to the <a href="#">Library Rules &amp; Regulations</a>, <a href="#">Membership Terms</a>, and <a href="#">Privacy Policy</a> of Al-Noor Central Library.</span>
+          </div></td>
+        </tr>
+      </table>
+      <div class="form-actions">
+        <button class="btn-back" onclick="nextStep(3)">← Back</button>
+        <button class="btn-submit" id="submitBtn" onclick="submitForm()">✦ Submit Registration</button>
+        <div class="signin-link">Already a member? <a href="login.html">Sign In</a></div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-seal">✅</div>
+      <h2>Registration Successful!</h2>
+      <p>Welcome to lIBRASMART, <strong id="successName">Member</strong>!</p>
+      <p style="font-size:0.88rem;margin-top:0.25rem;">Your membership application has been received and is under review.</p>
+      <div class="success-id" id="successId">Library Card ID: LIB-2025-XXXX</div>
+      <p style="font-size:0.82rem;color:var(--muted);max-width:440px;margin:0.75rem auto 0;">Please visit the library desk with your original CNIC to collect your physical membership card and activate your online account.</p>
+      <div class="success-actions">
+        <a href="login.html" class="s-btn-primary">Sign In Now</a>
+        <a href="index.html" class="s-btn-ghost">Back to Home</a>
+      </div>
+    </div>
+
+  </div><!-- /reg-card -->
+</div><!-- /page-body -->
+
+<div class="page-footer">
+  Al-Noor Central Library &nbsp;·&nbsp; Rawalpindi, Punjab, Pakistan &nbsp;·&nbsp;
+  <a href="about.html">About</a> &nbsp;·&nbsp; <a href="about.html#contact">Contact</a> &nbsp;·&nbsp; © 2025 LibraSmart
+</div>
+
+<script>
+  let curStep = 1;
+
+  function nextStep(n) {
+    if (n > curStep) {
+      if (curStep === 1) {
+        if (!document.getElementById('firstName').value.trim() || !document.getElementById('lastName').value.trim()) {
+          alert('Please enter your full name to continue.'); return;
+        }
+      }
+      if (curStep === 3) {
+        if (!document.getElementById('email').value.trim()) { alert('Please enter your email address.'); return; }
+        if (document.getElementById('password').value.length < 8) { alert('Password must be at least 8 characters.'); return; }
+        if (document.getElementById('password').value !== document.getElementById('confirmPw').value) { alert('Passwords do not match.'); return; }
+      }
+    }
+    document.getElementById('step' + curStep).classList.remove('active');
+    curStep = n;
+    document.getElementById('step' + n).classList.add('active');
+    for (let i = 1; i <= 4; i++) {
+      const sc = document.getElementById('sc' + i);
+      const sl = document.getElementById('sl' + i);
+      if (i < n)        { sc.className = 'step-circle done'; sc.textContent = '✓'; sl.className = 'step-label'; }
+      else if (i === n) { sc.className = 'step-circle active'; sc.textContent = i; sl.className = 'step-label active'; }
+      else              { sc.className = 'step-circle'; sc.textContent = i; sl.className = 'step-label'; }
+    }
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById('conn' + i).className = 'step-connector' + (i < n ? ' done' : '');
+    }
+    if (n === 4) buildReview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function buildReview() {
+    const g = id => document.getElementById(id)?.value || '—';
+    const mt = document.getElementById('memberType');
+    const rows = [
+      ['Full Name',       g('firstName') + ' ' + g('lastName')],
+      ["Father's Name",   g('fatherName')],
+      ['Date of Birth',   g('dob')],
+      ['CNIC',            g('cnic') || '—'],
+      ['Phone',           g('phone')],
+      ['Address',         g('address')],
+      ['Member Type',     mt.options[mt.selectedIndex]?.text || '—'],
+      ['Institution',     g('institution')],
+      ['Email',           g('email')],
+      ['Username',        g('username')],
+    ];
+    document.getElementById('reviewTable').innerHTML = rows.map(([k,v]) => `
+      <tr>
+        <td class="lbl"><div class="lbl-text">${k}</div></td>
+        <td class="val" style="font-weight:500;color:var(--ink);">${v}</td>
+      </tr>`).join('');
+  }
+
+  function submitForm() {
+    if (!document.getElementById('termsCheck').checked) { alert('Please agree to the terms before submitting.'); return; }
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = '⏳ Submitting…'; btn.disabled = true;
+    setTimeout(() => {
+      document.getElementById('step4').classList.remove('active');
+      document.getElementById('successScreen').style.display = 'block';
+      document.getElementById('stepsRow').style.display = 'none';
+      document.getElementById('successName').textContent =
+        document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value;
+      document.getElementById('successId').textContent =
+        'Library Card ID: LIB-2025-' + (Math.floor(Math.random() * 9000) + 1000);
+    }, 1600);
+  }
+
+  function selectRadio(el, gid) {
+    document.querySelectorAll('#' + gid + ' .radio-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function toggleCheck(el) {
+    el.classList.toggle('selected');
+    el.querySelector('input').checked = el.classList.contains('selected');
+  }
+  function sameAsPhone(el) {
+    el.classList.toggle('selected');
+    el.querySelector('input').checked = el.classList.contains('selected');
+    if (el.classList.contains('selected'))
+      document.getElementById('whatsapp').value = document.getElementById('phone').value;
+  }
+  function formatCNIC(el) {
+    let v = el.value.replace(/\D/g,'');
+    if (v.length > 5)  v = v.slice(0,5) + '-' + v.slice(5);
+    if (v.length > 13) v = v.slice(0,13) + '-' + v.slice(13);
+    el.value = v.slice(0,15);
+  }
+  function previewPhoto(input) {
+    if (!input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById('photoImg');
+      img.src = e.target.result; img.style.display = 'block';
+      img.parentElement.querySelector('.photo-placeholder').style.display = 'none';
+      img.parentElement.querySelector('.photo-hint').style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+  function checkStrength(v) {
+    let s = 0;
+    if (v.length >= 8) s++; if (/[A-Z]/.test(v)) s++;
+    if (/[0-9]/.test(v)) s++; if (/[^A-Za-z0-9]/.test(v)) s++;
+    const c = ['#ddd','#e74c3c','#e67e22','#f1c40f','#27ae60'];
+    const l = ['Enter a password','Weak','Fair','Good','Strong ✓'];
+    for (let i = 1; i <= 4; i++)
+      document.getElementById('pb'+i).style.background = i <= s ? c[s] : 'var(--border)';
+    const lbl = document.getElementById('pwLabel');
+    lbl.textContent = l[s]; lbl.style.color = c[s] || 'var(--muted)';
+  }
+  function checkMatch() {
+    const p1 = document.getElementById('password').value;
+    const p2 = document.getElementById('confirmPw').value;
+    const ms = document.getElementById('matchStatus');
+    if (!p2) { ms.textContent = ''; return; }
+    ms.textContent = p1 === p2 ? '✓ Passwords match' : '✗ Passwords do not match';
+    ms.style.color  = p1 === p2 ? '#27ae60' : '#e74c3c';
+  }
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    btn.textContent = inp.type === 'password' ? 'Show' : 'Hide';
+  }
+  function checkUsername(el) {
+    el.value = el.value.toLowerCase().replace(/[^a-z0-9_]/g,'');
+    const s = document.getElementById('usernameStatus');
+    if (el.value.length < 3) { s.textContent=''; return; }
+    setTimeout(() => {
+      const taken = ['admin','librasmart','user','test','library'];
+      s.textContent = taken.includes(el.value) ? '✗' : '✓';
+      s.style.color  = taken.includes(el.value) ? '#e74c3c' : '#27ae60';
+    }, 350);
+  }
+  function toggleAcademic() {
+    const v = document.getElementById('memberType').value;
+    const show = ['student','faculty','staff'].includes(v);
+    ['instRow','rollRow','deptRow'].forEach(id =>
+      document.getElementById(id).style.display = show ? '' : 'none');
+  }
+</script>
+</body>
+</html>

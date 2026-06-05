@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Confirmed — Al-Noor Central Library</title>
+  <link rel="stylesheet" href="global.css"/>
+  <style>
+    .page-wrapper { padding-top:var(--nav-h); background:var(--cream); min-height:100vh; }
+
+    /* ── CONFETTI / SUCCESS SECTION ── */
+    .success-hero {
+      background:var(--dark); padding:3.5rem 5%; text-align:center;
+      position:relative; overflow:hidden;
+    }
+    .success-hero::before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse 70% 80% at 50% 50%, rgba(74,124,47,0.12) 0%,transparent 70%);
+    }
+    .success-hero .z { position:relative; z-index:1; }
+    .success-ring {
+      width:100px; height:100px; border-radius:50%;
+      background:linear-gradient(135deg,#2D5016,#4A8020);
+      display:flex; align-items:center; justify-content:center;
+      font-size:2.8rem; margin:0 auto 1.25rem;
+      box-shadow:0 0 0 12px rgba(74,124,47,0.15), 0 0 0 24px rgba(74,124,47,0.07);
+      animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes popIn { from{transform:scale(0.3);opacity:0;} to{transform:scale(1);opacity:1;} }
+    .success-hero h1 { font-family:var(--font-serif); color:var(--cream); font-size:2rem; margin-bottom:0.4rem; }
+    .success-hero p  { color:rgba(254,252,248,0.6); font-size:0.92rem; }
+    .order-id-chip {
+      display:inline-block; margin-top:1rem; padding:0.5rem 1.5rem;
+      background:rgba(240,208,128,0.15); border:1px solid rgba(240,208,128,0.3);
+      border-radius:20px; font-family:var(--font-serif); font-size:0.9rem;
+      color:var(--gold-light); letter-spacing:0.08em;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .confirm-body { max-width:900px; margin:0 auto; padding:2rem 5%; display:grid; grid-template-columns:1fr 340px; gap:2rem; align-items:start; }
+
+    /* Order Details card */
+    .order-detail-card { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+    .odc-head { background:var(--dark); padding:1.1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; }
+    .odc-head h3 { font-family:var(--font-serif); color:var(--cream); font-size:0.95rem; }
+    .order-item-row { display:flex; align-items:center; gap:1rem; padding:0.9rem 1.5rem; border-bottom:1px solid var(--border); }
+    .order-item-row:last-child { border-bottom:none; }
+    .oi-thumb { width:48px; height:58px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0; }
+    .t1{background:linear-gradient(145deg,#8B4513,#C46A2A);}
+    .t2{background:linear-gradient(145deg,#1A1A5E,#3333AA);}
+    .t3{background:linear-gradient(145deg,#5C1A1A,#8B2020);}
+    .oi-meta { flex:1; }
+    .oi-meta h4 { font-size:0.87rem; font-weight:600; margin-bottom:2px; }
+    .oi-meta small { font-size:0.74rem; color:var(--text-muted); }
+    .oi-price { font-family:var(--font-serif); font-weight:700; color:var(--brown); font-size:0.95rem; }
+
+    /* Status timeline */
+    .status-timeline { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.5rem; margin-top:1.5rem; }
+    .st-title { font-family:var(--font-serif); font-size:1rem; font-weight:600; margin-bottom:1.25rem; }
+    .timeline { position:relative; padding-left:1.5rem; }
+    .timeline::before { content:''; position:absolute; left:9px; top:0; bottom:0; width:2px; background:var(--border); }
+    .tl-step { position:relative; margin-bottom:1.25rem; }
+    .tl-step:last-child { margin-bottom:0; }
+    .tl-dot { position:absolute; left:-1.5rem; top:3px; width:18px; height:18px; border-radius:50%;
+      border:2px solid var(--border); background:var(--cream); display:flex; align-items:center;
+      justify-content:center; font-size:0.6rem; }
+    .tl-dot.done   { background:var(--green-light,#4A7C2F); border-color:var(--green-light,#4A7C2F); color:white; }
+    .tl-dot.active { background:var(--gold); border-color:var(--gold); }
+    .tl-dot.pending{ background:var(--cream); border-color:var(--border); }
+    .tl-label { font-size:0.87rem; font-weight:600; color:var(--dark); margin-bottom:2px; }
+    .tl-time  { font-size:0.74rem; color:var(--text-muted); }
+
+    /* Info sidebar */
+    .info-card { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:1.25rem; }
+    .ic-head { background:var(--brown); padding:0.85rem 1.25rem; }
+    .ic-head h4 { font-family:var(--font-serif); color:var(--cream); font-size:0.9rem; }
+    .ic-body { padding:1.1rem 1.25rem; }
+    .info-row { display:flex; justify-content:space-between; margin-bottom:0.55rem; font-size:0.84rem; }
+    .info-row:last-child { margin-bottom:0; }
+    .info-row .ik { color:var(--text-muted); }
+    .info-row .iv { font-weight:500; color:var(--dark); text-align:right; }
+    .info-divider { height:1px; background:var(--border); margin:0.6rem 0; }
+    .info-total { display:flex; justify-content:space-between; font-size:1rem; font-weight:700; }
+    .info-total .it-amt { font-family:var(--font-serif); font-size:1.2rem; color:var(--brown); }
+
+    .action-buttons { display:flex; flex-direction:column; gap:0.6rem; }
+
+    @media(max-width:800px){
+      .confirm-body { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F0D080"><path d="M4 4h16v2H4zm0 4h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg></div>
+    LibraSmart
+  </a>
+  <nav class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="shop.html">Buy Books</a>
+    <a href="my-orders.html" class="active">My Orders</a>
+  </nav>
+  <div class="nav-actions"><div class="nav-user"><div class="nav-avatar">AK</div></div></div>
+</nav>
+
+<div class="page-wrapper">
+
+  <!-- SUCCESS HERO -->
+  <div class="success-hero">
+    <div class="z">
+      <div class="success-ring">✅</div>
+      <h1>Order Placed Successfully!</h1>
+      <p>Thank you for your purchase from Al-Noor Central Library</p>
+      <div class="order-id-chip" id="orderIdChip">ORD-2025-XXXXX</div>
+    </div>
+  </div>
+
+  <div class="confirm-body">
+
+    <!-- LEFT: Order Details + Timeline -->
+    <div>
+      <div class="order-detail-card">
+        <div class="odc-head">
+          <h3>📦 Order Items</h3>
+          <span class="badge badge-available" id="statusBadge">Confirmed</span>
+        </div>
+        <div id="orderItemsList">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <!-- STATUS TIMELINE -->
+      <div class="status-timeline">
+        <div class="st-title">📍 Order Tracking</div>
+        <div class="timeline">
+          <div class="tl-step">
+            <div class="tl-dot done">✓</div>
+            <div class="tl-label">Order Placed</div>
+            <div class="tl-time" id="placedTime">—</div>
+          </div>
+          <div class="tl-step">
+            <div class="tl-dot active">⟳</div>
+            <div class="tl-label">Order Confirmed</div>
+            <div class="tl-time">Pending admin confirmation</div>
+          </div>
+          <div class="tl-step">
+            <div class="tl-dot pending"></div>
+            <div class="tl-label">Processing & Packing</div>
+            <div class="tl-time">1–2 business days</div>
+          </div>
+          <div class="tl-step">
+            <div class="tl-dot pending"></div>
+            <div class="tl-label">Shipped via TCS / Leopards</div>
+            <div class="tl-time">3–5 business days</div>
+          </div>
+          <div class="tl-step">
+            <div class="tl-dot pending"></div>
+            <div class="tl-label">Delivered to Your Door</div>
+            <div class="tl-time">Estimated: 5–7 days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Summary + Actions -->
+    <div>
+      <div class="info-card">
+        <div class="ic-head"><h4>💰 Payment Summary</h4></div>
+        <div class="ic-body">
+          <div class="info-row"><span class="ik">Subtotal</span><span class="iv" id="cfSubtotal">PKR —</span></div>
+          <div class="info-row"><span class="ik">Delivery Fee</span><span class="iv" id="cfDelivery">PKR 150</span></div>
+          <div class="info-divider"></div>
+          <div class="info-total"><span>Total Paid</span><span class="it-amt" id="cfTotal">PKR —</span></div>
+          <div style="margin-top:0.75rem;">
+            <div class="info-row"><span class="ik">Payment</span><span class="iv" id="cfMethod">Cash on Delivery</span></div>
+            <div class="info-row"><span class="ik">Status</span><span class="iv" style="color:var(--rust);">⏳ Pending</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-head"><h4>📍 Delivery Address</h4></div>
+        <div class="ic-body">
+          <div style="font-size:0.87rem;color:var(--dark);line-height:1.7;" id="cfAddress">—</div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="my-orders.html" class="btn btn-primary btn-lg">📋 View My Orders</a>
+        <a href="shop.html" class="btn btn-outline btn-lg">🛒 Continue Shopping</a>
+        <button class="btn btn-ghost btn-lg" onclick="window.print()">🖨 Print Receipt</button>
+      </div>
+
+      <div style="margin-top:1rem;background:rgba(201,149,42,0.08);border:1px solid rgba(201,149,42,0.2);border-radius:var(--radius-md);padding:1rem;font-size:0.82rem;color:var(--brown);line-height:1.6;">
+        📌 <strong>Cash on Delivery Note:</strong> Please keep the exact amount ready. Our delivery partner will collect payment when delivering your books.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Load order from session (set by cart.html) or from URL params
+  const order = JSON.parse(sessionStorage.getItem('lastOrder') || 'null') || {
+    order_number: 'ORD-2025-00041',
+    name: 'Ali Khan', phone: '+92 300 0000000', city: 'Rawalpindi',
+    payment: 'cash_on_delivery',
+    items: [
+      {title:'Clean Code',author:'Robert C. Martin',quantity:1,unit_price:699,emoji:'📘',color:'t1'},
+      {title:'Dune',author:'Frank Herbert',quantity:2,unit_price:799,emoji:'🌌',color:'t2'},
+    ],
+    total: 2447,
+  };
+
+  // Fill page
+  document.getElementById('orderIdChip').textContent = order.order_number;
+  document.getElementById('placedTime').textContent = new Date().toLocaleString('en-PK');
+
+  const subtotal = order.items.reduce((s,i)=>s+i.unit_price*i.quantity,0);
+  const delivery = order.total - subtotal;
+  document.getElementById('cfSubtotal').textContent = `PKR ${subtotal.toLocaleString()}`;
+  document.getElementById('cfDelivery').textContent = delivery <= 0 ? 'FREE' : `PKR ${delivery.toLocaleString()}`;
+  document.getElementById('cfTotal').textContent    = `PKR ${order.total.toLocaleString()}`;
+  document.getElementById('cfMethod').textContent   = order.payment.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  document.getElementById('cfAddress').innerHTML    = `<strong>${order.name}</strong><br/>${order.phone}<br/>${order.city}`;
+
+  document.getElementById('orderItemsList').innerHTML = order.items.map(i=>`
+    <div class="order-item-row">
+      <div class="oi-thumb ${i.color}">${i.emoji}</div>
+      <div class="oi-meta"><h4>${i.title}</h4><small>${i.author} · Qty: ${i.quantity}</small></div>
+      <div class="oi-price">PKR ${(i.unit_price*i.quantity).toLocaleString()}</div>
+    </div>`).join('');
+</script>
+</body>
+</html>

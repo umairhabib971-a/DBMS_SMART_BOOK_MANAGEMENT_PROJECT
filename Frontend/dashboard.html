@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — LibraSmart</title>
+  <link rel="stylesheet" href="global.css"/>
+  <style>
+    .page-wrapper { padding-top: var(--nav-h); background: var(--cream); min-height: 100vh; }
+    .dash-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - var(--nav-h)); }
+
+    /* SIDEBAR */
+    .dash-sidebar {
+      background: var(--dark); color: var(--cream);
+      padding: 1.75rem 1.25rem;
+      display: flex; flex-direction: column; gap: 0.25rem;
+      position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto;
+    }
+    .dash-sidebar .sidebar-title { color: rgba(254,252,248,0.35); }
+    .dash-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0.65rem 0.85rem; border-radius: var(--radius-sm);
+      font-size: 0.88rem; font-weight: 500; color: rgba(254,252,248,0.6);
+      transition: all 0.2s; cursor: pointer; text-decoration: none;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .dash-link:hover { background: rgba(254,252,248,0.08); color: var(--cream); }
+    .dash-link.active { background: rgba(201,149,42,0.2); color: var(--gold-light); }
+    .dash-link .icon { width: 20px; text-align: center; }
+    .dash-link .badge-count {
+      margin-left: auto; background: var(--gold); color: var(--dark);
+      font-size: 0.7rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 20px;
+    }
+    .sidebar-sep { height: 1px; background: rgba(254,252,248,0.07); margin: 0.75rem 0; }
+    .sidebar-profile {
+      margin-top: auto; padding: 1rem 0.85rem;
+      border-top: 1px solid rgba(254,252,248,0.07);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .s-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); color: var(--dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+    .s-name { font-size: 0.85rem; font-weight: 600; color: var(--cream); }
+    .s-role { font-size: 0.72rem; color: rgba(254,252,248,0.4); }
+    .s-logout { margin-left: auto; background: none; border: none; color: rgba(254,252,248,0.35); cursor: pointer; font-size: 1rem; }
+    .s-logout:hover { color: var(--error); }
+
+    /* MAIN */
+    .dash-main { padding: 2.5rem; overflow-y: auto; }
+    .dash-header { margin-bottom: 2rem; }
+    .dash-header h1 { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 700; margin-bottom: 4px; }
+    .dash-header p { color: var(--text-muted); font-size: 0.9rem; }
+    .hello-date { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+
+    /* STATS ROW */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    .s-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1.3rem 1.5rem;
+      display: flex; flex-direction: column; gap: 0.4rem;
+    }
+    .s-card .s-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .s-card .s-icon { font-size: 1.4rem; }
+    .s-card .s-trend { font-size: 0.72rem; color: var(--green-light); background: rgba(74,124,47,0.1); padding: 2px 7px; border-radius: 20px; }
+    .s-card .s-trend.down { color: var(--error); background: rgba(192,57,43,0.08); }
+    .s-card .s-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--dark); line-height: 1; }
+    .s-card .s-lbl { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* TWO COL LAYOUT */
+    .two-panel { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+    /* BORROWED BOOKS */
+    .panel-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .panel-head h3 { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; }
+    .book-list { padding: 0.5rem 0; }
+    .book-row {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.85rem 1.5rem; border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .book-row:last-child { border-bottom: none; }
+    .book-row:hover { background: rgba(92,61,30,0.03); }
+    .book-spine {
+      width: 42px; height: 58px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .sp1 { background: linear-gradient(160deg,#8B4513,#C46A2A); }
+    .sp2 { background: linear-gradient(160deg,#2D5016,#4A8020); }
+    .sp3 { background: linear-gradient(160deg,#1A1A5E,#3333AA); }
+    .sp4 { background: linear-gradient(160deg,#5C1A1A,#8B2020); }
+    .book-meta { flex: 1; min-width: 0; }
+    .book-meta h4 { font-size: 0.88rem; font-weight: 600; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .book-meta span { font-size: 0.75rem; color: var(--text-muted); }
+    .due-info { text-align: right; flex-shrink: 0; }
+    .due-date { font-size: 0.78rem; font-weight: 600; color: var(--rust); }
+    .due-label { font-size: 0.72rem; color: var(--text-muted); }
+    .due-safe { color: var(--green-light); }
+
+    /* ACTIVITY FEED */
+    .activity-list { padding: 0.5rem 0; }
+    .act-item { display: flex; align-items: flex-start; gap: 12px; padding: 0.85rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .act-item:last-child { border-bottom: none; }
+    .act-dot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .ad-borrow { background: rgba(92,61,30,0.1); }
+    .ad-return { background: rgba(74,124,47,0.1); }
+    .ad-fine   { background: rgba(192,57,43,0.08); }
+    .ad-renew  { background: rgba(201,149,42,0.1); }
+    .act-text { flex: 1; }
+    .act-text p { font-size: 0.83rem; color: var(--dark); line-height: 1.4; }
+    .act-text small { font-size: 0.74rem; color: var(--text-muted); }
+
+    /* RECOMMENDATIONS */
+    .reco-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .reco-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius-md); overflow: hidden;
+      transition: all 0.25s; cursor: pointer;
+    }
+    .reco-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .reco-cover { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+    .rc1 { background: linear-gradient(135deg,#8B4513,#D2691E); }
+    .rc2 { background: linear-gradient(135deg,#2D5016,#5A8A2A); }
+    .rc3 { background: linear-gradient(135deg,#1A3A6E,#2E6DA4); }
+    .rc4 { background: linear-gradient(135deg,#6B3FA0,#9B59B6); }
+    .reco-info { padding: 0.75rem; }
+    .reco-info h4 { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .reco-info small { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* NOTICE */
+    .notice {
+      background: rgba(201,149,42,0.1); border: 1px solid rgba(201,149,42,0.25);
+      border-radius: var(--radius-md); padding: 1rem 1.25rem;
+      display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;
+    }
+    .notice span { font-size: 1.2rem; }
+    .notice p { font-size: 0.85rem; color: var(--brown); flex: 1; }
+    .notice .btn-sm { flex-shrink: 0; }
+
+    @media (max-width: 1000px) {
+      .dash-layout { grid-template-columns: 1fr; }
+      .dash-sidebar { display: none; }
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+      .two-panel { grid-template-columns: 1fr; }
+      .reco-row { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F0D080"><path d="M4 4h16v2H4zm0 4h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg></div>
+    LibraSmart
+  </a>
+  <nav class="nav-links">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="catalog.html">Catalog</a>
+    <a href="my-books.html">My Books</a>
+    <a href="about.html">About</a>
+  </nav>
+  <div class="nav-actions">
+    <div class="nav-user">
+      <div class="nav-avatar"></div>
+      <span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <div class="dash-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="dash-sidebar">
+      <div class="sidebar-title">MAIN MENU</div>
+      <a href="dashboard.html" class="dash-link active"><span class="icon">🏠</span> Dashboard</a>
+      <a href="catalog.html" class="dash-link"><span class="icon">📚</span> Browse Catalog</a>
+      <a href="my-books.html" class="dash-link"><span class="icon">📖</span> My Books <span class="badge-count">3</span></a>
+      <div class="sidebar-sep"></div>
+      <div class="sidebar-title">ACCOUNT</div>
+      <a href="#" class="dash-link"><span class="icon">👤</span> My Profile</a>
+      <a href="#" class="dash-link"><span class="icon">🔔</span> Notifications <span class="badge-count">2</span></a>
+      <a href="#" class="dash-link"><span class="icon">⚙️</span> Settings</a>
+      <div class="sidebar-sep"></div>
+      <div class="sidebar-title">SUPPORT</div>
+      <a href="about.html" class="dash-link"><span class="icon">❓</span> Help & FAQ</a>
+      <div class="sidebar-profile">
+        <div class="s-avatar">AK</div>
+        <div><div class="s-name">Ali Khan</div><div class="s-role">Member</div></div>
+        <button class="s-logout" title="Logout" onclick="window.location.href='login.html'">⏻</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+      <div class="dash-header">
+        <div class="hello-date" id="dateStr">—</div>
+        <h1>Good Morning 👋</h1>
+        <p>Here's what's happening with your library account today.</p>
+      </div>
+
+      <!-- NOTICE -->
+      <div class="notice">
+        <span>⚠️</span>
+        <p><strong>"Dune" is due in 2 days.</strong> Return or renew it before May 7 to avoid a late fee.</p>
+        <a href="my-books.html" class="btn btn-outline btn-sm">Renew Now</a>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="s-card">
+          <div class="s-top"><div class="s-icon">📖</div><div class="s-trend">Active</div></div>
+          <div class="s-num">3</div>
+          <div class="s-lbl">Currently Borrowed</div>
+        </div>
+        <div class="s-card">
+          <div class="s-top"><div class="s-icon">✅</div><div class="s-trend">+5 this month</div></div>
+          <div class="s-num">28</div>
+          <div class="s-lbl">Books Returned</div>
+        </div>
+        <div class="s-card">
+          <div class="s-top"><div class="s-icon">⏰</div><div class="s-trend down">Due Soon</div></div>
+          <div class="s-num">1</div>
+          <div class="s-lbl">Overdue Books</div>
+        </div>
+        <div class="s-card">
+          <div class="s-top"><div class="s-icon">⭐</div><div class="s-trend">All time</div></div>
+          <div class="s-num">31</div>
+          <div class="s-lbl">Total Read</div>
+        </div>
+      </div>
+
+      <!-- BORROWED + ACTIVITY -->
+      <div class="two-panel">
+        <div class="panel-card">
+          <div class="panel-head">
+            <h3>Currently Borrowed</h3>
+            <a href="my-books.html" class="btn btn-ghost btn-sm">View All</a>
+          </div>
+          <div class="book-list">
+            <div class="book-row">
+              <div class="book-spine sp1">📘</div>
+              <div class="book-meta"><h4>Clean Code</h4><span>Robert C. Martin</span></div>
+              <div class="due-info"><div class="due-date due-safe">May 20, 2025</div><div class="due-label">Due Date</div></div>
+              <a href="book-detail.html" class="btn btn-ghost btn-sm">Renew</a>
+            </div>
+            <div class="book-row">
+              <div class="book-spine sp3">🌌</div>
+              <div class="book-meta"><h4>Dune</h4><span>Frank Herbert</span></div>
+              <div class="due-info"><div class="due-date">May 7, 2025</div><div class="due-label">Due Date</div></div>
+              <a href="book-detail.html" class="btn btn-outline btn-sm">Renew</a>
+            </div>
+            <div class="book-row">
+              <div class="book-spine sp2">🌿</div>
+              <div class="book-meta"><h4>Atomic Habits</h4><span>James Clear</span></div>
+              <div class="due-info"><div class="due-date due-safe">May 25, 2025</div><div class="due-label">Due Date</div></div>
+              <a href="book-detail.html" class="btn btn-ghost btn-sm">Renew</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <h3>Recent Activity</h3>
+          </div>
+          <div class="activity-list">
+            <div class="act-item">
+              <div class="act-dot ad-borrow">📥</div>
+              <div class="act-text"><p>Borrowed <strong>Atomic Habits</strong></p><small>Today, 10:15 AM</small></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot ad-return">📤</div>
+              <div class="act-text"><p>Returned <strong>Sapiens</strong></p><small>Apr 30, 2025</small></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot ad-renew">🔄</div>
+              <div class="act-text"><p>Renewed <strong>Clean Code</strong></p><small>Apr 28, 2025</small></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot ad-fine">⚠️</div>
+              <div class="act-text"><p>Late fee of <strong>PKR 20</strong> cleared</p><small>Apr 22, 2025</small></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot ad-borrow">📥</div>
+              <div class="act-text"><p>Borrowed <strong>Dune</strong></p><small>Apr 20, 2025</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECOMMENDATIONS -->
+      <div class="panel-head" style="margin-bottom:1rem; padding:0;">
+        <h3 style="font-family:var(--font-serif);">Recommended for You</h3>
+        <a href="catalog.html" class="btn btn-ghost btn-sm">Browse All →</a>
+      </div>
+      <div class="reco-row">
+        <div class="reco-card" onclick="window.location.href='book-detail.html'">
+          <div class="reco-cover rc1">📗</div>
+          <div class="reco-info"><h4>The Psychology of Money</h4><small>Morgan Housel</small></div>
+        </div>
+        <div class="reco-card" onclick="window.location.href='book-detail.html'">
+          <div class="reco-cover rc2">🌱</div>
+          <div class="reco-info"><h4>Deep Work</h4><small>Cal Newport</small></div>
+        </div>
+        <div class="reco-card" onclick="window.location.href='book-detail.html'">
+          <div class="reco-cover rc3">🌊</div>
+          <div class="reco-info"><h4>The Lean Startup</h4><small>Eric Ries</small></div>
+        </div>
+        <div class="reco-card" onclick="window.location.href='book-detail.html'">
+          <div class="reco-cover rc4">🔮</div>
+          <div class="reco-info"><h4>Thinking, Fast and Slow</h4><small>Daniel Kahneman</small></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  const d = new Date();
+  document.getElementById('dateStr').textContent = d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+</script>
+</body>
+</html>
